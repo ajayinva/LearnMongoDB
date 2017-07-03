@@ -11,11 +11,11 @@
 	<name>LearnMongoDB</name>
 	<description>LearnMongoDB</description>
 
-	<!-- <parent>
+	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>1.5.4.RELEASE</version>
-		<relativePath/> lookup parent from repository
+		<relativePath/>
 	</parent>
 
 	<properties>
@@ -45,14 +45,14 @@
 			</plugin>
 		</plugins>
 	</build>
- -->
 
-	<dependencies>
+
+<!-- 	<dependencies>
 	    <dependency>
 	        <groupId>org.mongodb</groupId>
 	        <artifactId>mongodb-driver</artifactId>
 	        <version>3.4.2</version>
 	    </dependency>
-	</dependencies>
+	</dependencies> -->
 
 </project>
