@@ -10,6 +10,7 @@ import org.bson.Document;
 
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
 /**
@@ -33,8 +34,13 @@ public class Find {
 								,	new Document("D",4)
 								,	new Document("E",5)
 								);
-		testCollection.insertMany(docList);
-		System.out.println("Count::"+testCollection.count());
+		testCollection.insertMany(docList);		
+		MongoCursor<Document> resultSet = testCollection.find().iterator();
+		while(resultSet.hasNext()){
+			Document doc = resultSet.next();
+			System.out.println(doc);
+		}
+		
 		mongoClient.close();
 	}
 }
