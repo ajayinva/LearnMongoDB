@@ -4,7 +4,6 @@
 package com.awsaces.learn.mongodb;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.bson.Document;
@@ -14,8 +13,6 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
-import static com.mongodb.client.model.Projections.*;
-
 import static com.mongodb.client.model.Filters.*;
 
 /**
@@ -82,20 +79,18 @@ public class Find {
 		         System.out.println(document.toJson());
 		     }
 		};		
-		collection.find(gt("A", 90)).forEach(printBlock);		
+		collection
+			.find(gt("A", 90))
+			.forEach(printBlock);		
 		System.out.println("---------------------------------------------------------------------------------");		
-		collection.find(and(gt("A", 90), lte("B", 105))).forEach(printBlock);
+		collection
+			.find(and(gt("A", 90), lte("B", 105)))
+			.forEach(printBlock);
 		System.out.println("---------------------------------------------------------------------------------");		
-		collection.find(or(gt("A", 90), lte("B", 20))).forEach(printBlock);
+		collection
+			.find(or(gt("A", 90), lte("B", 20)))
+			.forEach(printBlock);
 		System.out.println("---------------------------------------------------------------------------------");
-		collection.find(
-			or(gte("A", 95), lte("B", 11))
-		).projection(new Document("A", 0).append("_id", 0))
-		.forEach(printBlock);
-		System.out.println("---------------------------------------------------------------------------------");
-		collection.find(or(gte("A", 95), lte("B", 11)))
-		.projection(fields(include("A"),include("B"), excludeId()))
-		.forEach(printBlock);
 		mongoClient.close();
 	}
 }
