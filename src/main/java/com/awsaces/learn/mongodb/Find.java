@@ -3,15 +3,18 @@
  */
 package com.awsaces.learn.mongodb;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.bson.Document;
 
+import com.mongodb.Block;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import static com.mongodb.client.model.Filters.*;
 
 /**
  * @author aagarwal
@@ -25,21 +28,64 @@ public class Find {
 	public static void main(String[] args) {
 		MongoClient mongoClient = new MongoClient(); 
 		MongoDatabase mongoDatabase = mongoClient.getDatabase("learn-mongodb");
-		MongoCollection<Document> testCollection = mongoDatabase.getCollection("test");
-		testCollection.drop();					
-		List<Document> docList = Arrays.asList(
-									new Document("A",1)
-								,	new Document("B",2)
-								,	new Document("C",3)
-								,	new Document("D",4)
-								,	new Document("E",5)
-								);
-		testCollection.insertMany(docList);		
-		MongoCursor<Document> resultSet = testCollection.find().iterator();
-		while(resultSet.hasNext()){
-			Document doc = resultSet.next();
-			System.out.println(doc);
+		MongoCollection<Document> collection = mongoDatabase.getCollection("test");
+		collection.drop();					
+		
+		List<Document> docList = new ArrayList<>();
+		for(int i = 0 ; i<100;i ++){
+			docList.add(
+				new Document("A", i)
+					.append("B", i+10)
+					.append("C", true)
+			);
 		}
+		collection.insertMany(docList);		
+		
+		//Find First
+		System.out.println(collection.find().first().toJson());
+		System.out.println("---------------------------------------------------------------------------------");
+		//Find All
+		MongoCursor<Document> cursor1 = collection.find().iterator();
+		try {
+			while(cursor1.hasNext()){
+				Document doc = cursor1.next();
+				System.out.println(doc.toJson());
+			}
+		} finally{
+			cursor1.close();
+		}
+		System.out.println("---------------------------------------------------------------------------------");
+		//Find A = 63
+		MongoCursor<Document> cursor2 = collection.find(new Document("A", 63)).iterator();
+		try {
+			while(cursor2.hasNext()){
+				Document doc = cursor2.next();
+				System.out.println(doc.toJson());
+			}
+		} finally{
+			cursor2.close();
+		}
+		System.out.println("---------------------------------------------------------------------------------");
+		//Find B = 97
+		//MongoCursor<Document> cursor3 = collection.find(Filters.eq("B", 97)).iterator();
+		MongoCursor<Document> cursor3 = collection.find(eq("B", 97)).iterator();
+		try {
+			while(cursor3.hasNext()){
+				Document doc = cursor3.next();
+				System.out.println(doc.toJson());
+			}
+		} finally{
+			cursor3.close();
+		}
+		System.out.println("---------------------------------------------------------------------------------");				
+		Block<Document> printBlock = new Block<Document>() {
+		     @Override
+		     public void apply(final Document document) {
+		         System.out.println(document.toJson());
+		     }
+		};		
+		collection.find(gt("A", 90)).forEach(printBlock);		
+		System.out.println("---------------------------------------------------------------------------------");
 		
 		mongoClient.close();
 	}
