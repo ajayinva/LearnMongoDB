@@ -14,6 +14,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import static com.mongodb.client.model.Projections.*;
+
 import static com.mongodb.client.model.Filters.*;
 
 /**
@@ -39,12 +41,10 @@ public class Find {
 					.append("C", true)
 			);
 		}
-		collection.insertMany(docList);		
-		
-		//Find First
+		collection.insertMany(docList);				
+		System.out.println("---------------------------------------------------------------------------------");
 		System.out.println(collection.find().first().toJson());
 		System.out.println("---------------------------------------------------------------------------------");
-		//Find All
 		MongoCursor<Document> cursor1 = collection.find().iterator();
 		try {
 			while(cursor1.hasNext()){
@@ -66,8 +66,6 @@ public class Find {
 			cursor2.close();
 		}
 		System.out.println("---------------------------------------------------------------------------------");
-		//Find B = 97
-		//MongoCursor<Document> cursor3 = collection.find(Filters.eq("B", 97)).iterator();
 		MongoCursor<Document> cursor3 = collection.find(eq("B", 97)).iterator();
 		try {
 			while(cursor3.hasNext()){
@@ -85,8 +83,19 @@ public class Find {
 		     }
 		};		
 		collection.find(gt("A", 90)).forEach(printBlock);		
+		System.out.println("---------------------------------------------------------------------------------");		
+		collection.find(and(gt("A", 90), lte("B", 105))).forEach(printBlock);
+		System.out.println("---------------------------------------------------------------------------------");		
+		collection.find(or(gt("A", 90), lte("B", 20))).forEach(printBlock);
 		System.out.println("---------------------------------------------------------------------------------");
-		
+		collection.find(
+			or(gte("A", 95), lte("B", 11))
+		).projection(new Document("A", 0).append("_id", 0))
+		.forEach(printBlock);
+		System.out.println("---------------------------------------------------------------------------------");
+		collection.find(or(gte("A", 95), lte("B", 11)))
+		.projection(fields(include("A"),include("B"), excludeId()))
+		.forEach(printBlock);
 		mongoClient.close();
 	}
 }
